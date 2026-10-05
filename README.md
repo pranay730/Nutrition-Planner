@@ -2,7 +2,7 @@
 
 A production-oriented modular monolith that recommends what a user should eat next based on their daily calorie budget, meal schedule, preferences, pantry, and meal history.
 
-This repository currently contains the Phase 1 foundation: React/Vite, FastAPI, PostgreSQL, Redis, Celery, Docker Compose, and a health endpoint. Product features described in [PLAN.md](PLAN.md) are intentionally deferred until this foundation is verified.
+This repository currently contains the Phase 1 foundation and Phase 2 persistence layer: React/Vite, FastAPI, PostgreSQL, Redis, Celery, Docker Compose, normalized SQLAlchemy models, Alembic migrations, and canonical recipe seed data. Product APIs described in [PLAN.md](PLAN.md) remain intentionally phased.
 
 ## Prerequisites
 
@@ -73,7 +73,22 @@ npm run dev
 
 ## Database migrations and seed data
 
-Alembic migrations and the seed command are scheduled for Phase 2. They are listed here to keep the intended developer workflow explicit; commands will be added only after the first models exist.
+With the Compose stack running, apply migrations and seed the canonical ingredient/recipe data:
+
+```bash
+docker compose exec backend alembic upgrade head
+docker compose exec backend seed-db
+```
+
+The seed command is idempotent and can be rerun after seed-data changes. Useful migration commands:
+
+```bash
+docker compose exec backend alembic current
+docker compose exec backend alembic history
+docker compose exec backend alembic downgrade base
+```
+
+For host-based backend development, run the equivalent commands from `backend/` using `alembic` and `seed-db` after exporting the host-local `DATABASE_URL` shown above.
 
 ## Configuration
 

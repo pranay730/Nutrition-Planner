@@ -9,4 +9,3 @@ router = APIRouter(tags=["health"])
 def health() -> HealthResponse:
     """Report API process health without requiring downstream services."""
     return HealthResponse(status="ok")
-

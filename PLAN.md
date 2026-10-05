@@ -102,4 +102,6 @@ Each phase must pass its relevant tests before the next phase begins.
 - **JWT access tokens only in the first auth slice:** refresh/revocation adds operational state and will be considered only if deployment requirements justify it.
 - **Celery Beat for recurring schedule discovery:** a periodic dispatcher can find reminders due soon and enqueue idempotent tasks. This is simpler and more resilient to schedule edits than maintaining one long-lived task per schedule.
 - **UTC persistence with a future user timezone field:** timestamps are stored in UTC; schedule evaluation converts through the user's timezone. The timezone field will be added with the profile/schedule model phase.
-
+- **UUID application identifiers:** domain rows use UUIDs so identifiers remain safe to generate outside a single database process and do not expose row counts.
+- **Portable string enums with database checks:** evolving V1 statuses remain readable strings and are constrained by PostgreSQL without creating PostgreSQL-native enum migration friction.
+- **Idempotent canonical seed data:** ingredients and recipes are matched by unique names, updated in place, and have their normalized associations reconciled on every seed run.

@@ -15,4 +15,3 @@ celery_app.conf.update(
     timezone="UTC",
     enable_utc=True,
 )
-

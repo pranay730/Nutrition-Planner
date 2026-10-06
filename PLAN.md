@@ -105,3 +105,6 @@ Each phase must pass its relevant tests before the next phase begins.
 - **UUID application identifiers:** domain rows use UUIDs so identifiers remain safe to generate outside a single database process and do not expose row counts.
 - **Portable string enums with database checks:** evolving V1 statuses remain readable strings and are constrained by PostgreSQL without creating PostgreSQL-native enum migration friction.
 - **Idempotent canonical seed data:** ingredients and recipes are matched by unique names, updated in place, and have their normalized associations reconciled on every seed run.
+- **Argon2id password hashing:** password verification uses a memory-hard hash and transparently upgrades stored hashes when parameters change.
+- **Short-lived stateless access tokens:** JWTs contain only the user subject and standard access-token claims, are audience/issuer validated, and expire after 30 minutes by default. Refresh and revocation state remain outside V1 until deployment needs justify them.
+- **Token-derived authorization:** protected handlers resolve the active user from the signed JWT subject and never accept a client-provided owner ID.

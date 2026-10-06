@@ -48,6 +48,9 @@ def _seed_recipe(
 
     existing = {item.ingredient.name: item for item in recipe.ingredients}
     expected_names = set(data["ingredients"])
+    missing = sorted(expected_names - ingredients_by_name.keys())
+    if missing:
+        raise ValueError(f"Unknown ingredients for {data['name']}: {missing}")
     for name in expected_names - existing.keys():
         recipe.ingredients.append(RecipeIngredient(ingredient=ingredients_by_name[name]))
     for name in existing.keys() - expected_names:

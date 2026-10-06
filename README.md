@@ -2,7 +2,7 @@
 
 A production-oriented modular monolith that recommends what a user should eat next based on their daily calorie budget, meal schedule, preferences, pantry, and meal history.
 
-This repository currently contains the Phase 1 foundation and Phase 2 persistence layer: React/Vite, FastAPI, PostgreSQL, Redis, Celery, Docker Compose, normalized SQLAlchemy models, Alembic migrations, and canonical recipe seed data. Product APIs described in [PLAN.md](PLAN.md) remain intentionally phased.
+This repository currently contains the Phase 1 foundation, Phase 2 persistence layer, and Phase 3 authentication API: React/Vite, FastAPI, PostgreSQL, Redis, Celery, Docker Compose, normalized SQLAlchemy models, Alembic migrations, canonical recipe seed data, and JWT-based authentication. Product APIs described in [PLAN.md](PLAN.md) remain intentionally phased.
 
 ## Prerequisites
 
@@ -63,6 +63,16 @@ pytest
 ruff check .
 ```
 
+`pytest` always runs SQLite persistence, seed, constraint, foreign-key, and authentication tests. PostgreSQL tests skip unless the database is reachable. To run the full Phase 2 and Phase 3 gate, start Postgres and point tests at an isolated database:
+
+```bash
+docker compose up -d postgres
+cd backend
+TEST_DATABASE_URL=postgresql+psycopg://nutrition:nutrition_dev@localhost:5432/nutrition_test pytest
+```
+
+The Postgres suite upgrades, seeds twice, compares Alembic history to SQLAlchemy metadata, downgrades and re-upgrades, then exercises registration, login, and current-user authorization. It uses `nutrition_test` so it does not wipe local development data.
+
 ## Frontend development without Docker
 
 ```bash
@@ -89,6 +99,25 @@ docker compose exec backend alembic downgrade base
 ```
 
 For host-based backend development, run the equivalent commands from `backend/` using `alembic` and `seed-db` after exporting the host-local `DATABASE_URL` shown above.
+
+## Authentication API
+
+Phase 3 provides JSON email/password authentication. Passwords require at least 12 characters and are stored only as Argon2id hashes.
+
+```bash
+curl -X POST http://localhost:8000/auth/register \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"developer@example.com","password":"correct horse battery staple"}'
+
+curl -X POST http://localhost:8000/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"developer@example.com","password":"correct horse battery staple"}'
+
+curl http://localhost:8000/users/me \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN'
+```
+
+Access tokens expire after 30 minutes by default. Set a unique `JWT_SECRET_KEY` of at least 32 characters in every shared environment; the application rejects the development placeholder when `ENVIRONMENT=production`.
 
 ## Configuration
 

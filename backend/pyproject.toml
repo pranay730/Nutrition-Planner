@@ -8,10 +8,13 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
   "alembic>=1.14,<2",
+  "argon2-cffi>=23.1,<26",
   "celery[redis]>=5.4,<6",
+  "email-validator>=2.2,<3",
   "fastapi>=0.115,<1",
   "psycopg[binary]>=3.2,<4",
   "pydantic-settings>=2.6,<3",
+  "PyJWT>=2.9,<3",
   "redis>=5.2,<6",
   "sqlalchemy>=2.0,<3",
   "uvicorn[standard]>=0.32,<1",
@@ -33,6 +36,9 @@ seed-db = "app.seed:main"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+markers = [
+  "postgres: tests that require a reachable PostgreSQL instance",
+]
 
 [tool.ruff]
 line-length = 100

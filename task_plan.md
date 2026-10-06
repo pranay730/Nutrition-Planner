@@ -52,10 +52,20 @@ Status legend: `[ ]` pending, `[~]` in progress, `[x]` complete.
 - [x] Verify the complete onboarding flow against containerized PostgreSQL.
 - [x] Run the complete Phase 4 quality gate.
 
+## Phase 5: daily state
+
+- [x] Implement token-owned `POST /meals` with validated UTC-normalized timestamps.
+- [x] Implement timezone-aware `GET /meals/today`.
+- [x] Implement derived `GET /daily-plan` calorie totals.
+- [x] Allocate remaining calories exactly across upcoming unlogged meal schedules.
+- [x] Handle DST boundaries, over-target days, and incomplete onboarding.
+- [x] Add timestamp, ownership, daily-boundary, and allocation tests.
+- [x] Verify meal logging and daily planning against containerized PostgreSQL.
+- [x] Run the complete Phase 5 quality gate.
+
 ## Future phases (not started)
 
 - [ ] Implement pantry management.
-- [ ] Implement meal logging and daily-plan allocation.
 - [ ] Implement deterministic recommendation engine.
 - [ ] Implement reminder and notification workflow.
 - [ ] Build the React product screens.

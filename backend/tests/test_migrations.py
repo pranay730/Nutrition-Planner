@@ -211,3 +211,19 @@ def test_authentication_flow_uses_postgres(postgres_engine: Engine, postgres_url
             json={"schedules": [{"meal_type": "dinner", "preferred_time": "18:30:00"}]},
         )
         assert schedules.status_code == 200
+
+        meal = client.post(
+            "/meals",
+            headers=auth_headers,
+            json={"meal_type": "lunch", "food_name": "Postgres bowl", "calories": 500},
+        )
+        assert meal.status_code == 201
+
+        today = client.get("/meals/today", headers=auth_headers)
+        assert today.status_code == 200
+        assert today.json()["total_calories"] == 500
+
+        daily_plan = client.get("/daily-plan", headers=auth_headers)
+        assert daily_plan.status_code == 200
+        assert daily_plan.json()["consumed_calories"] == 500
+        assert daily_plan.json()["remaining_calories"] == 1750

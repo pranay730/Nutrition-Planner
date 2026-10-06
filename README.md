@@ -63,7 +63,7 @@ pytest
 ruff check .
 ```
 
-`pytest` always runs SQLite persistence, seed, constraint, foreign-key, authentication, and onboarding tests. PostgreSQL tests skip unless the database is reachable. To run the full Phase 2 through Phase 4 gate, start Postgres and point tests at an isolated database:
+`pytest` always runs SQLite persistence, seed, constraint, foreign-key, authentication, onboarding, and daily-state tests. PostgreSQL tests skip unless the database is reachable. To run the full Phase 2 through Phase 5 gate, start Postgres and point tests at an isolated database:
 
 ```bash
 docker compose up -d postgres
@@ -71,7 +71,7 @@ cd backend
 TEST_DATABASE_URL=postgresql+psycopg://nutrition:nutrition_dev@localhost:5432/nutrition_test pytest
 ```
 
-The Postgres suite upgrades, seeds twice, compares Alembic history to SQLAlchemy metadata, downgrades and re-upgrades, then exercises authentication and the complete onboarding flow. It uses `nutrition_test` so it does not wipe local development data.
+The Postgres suite upgrades, seeds twice, compares Alembic history to SQLAlchemy metadata, downgrades and re-upgrades, then exercises authentication, onboarding, meal logging, and daily planning. It uses `nutrition_test` so it does not wipe local development data.
 
 ## Frontend development without Docker
 
@@ -144,6 +144,25 @@ curl -X PUT http://localhost:8000/meal-schedules \
 ```
 
 Cuisine preferences and meal schedules use replace semantics: each successful request becomes the user's complete current set. Ingredient suggestions are ranked by how many selected cuisines match each canonical ingredient.
+
+## Daily-state API
+
+Meal timestamps must include a timezone offset and are normalized to UTC. The “today” endpoints use the timezone stored during onboarding, including daylight-saving transitions.
+
+```bash
+curl -X POST http://localhost:8000/meals \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{"meal_type":"lunch","food_name":"Chickpea rice bowl","calories":560}'
+
+curl http://localhost:8000/meals/today \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN'
+
+curl http://localhost:8000/daily-plan \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN'
+```
+
+The daily plan derives consumed calories and the signed target-minus-consumed balance without storing duplicate totals. A positive balance is distributed exactly across upcoming schedule entries whose meal type has not already been logged today; over-target days report a negative balance and zero allocations.
 
 ## Configuration
 

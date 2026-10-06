@@ -111,3 +111,5 @@ Each phase must pass its relevant tests before the next phase begins.
 - **Server-calculated calorie targets:** onboarding uses Mifflin-St Jeor, explicit activity factors, and a conservative goal adjustment. Targets are rounded deterministically and bounded to the persistence safety range.
 - **Replace-style onboarding collections:** cuisine preferences and meal schedules are submitted as complete sets, making retries idempotent and removal behavior unambiguous.
 - **Preference-ranked pantry suggestions:** canonical ingredients matching more of the user's selected cuisines sort first, with ingredient name as the deterministic tie-breaker.
+- **Timezone-bounded daily state:** daily meal queries convert the profile's local midnight boundaries to UTC before querying, so totals remain correct across offsets and daylight-saving transitions.
+- **Derived exact meal allocation:** the daily plan reports the signed target-minus-consumed balance and distributes its positive portion across upcoming, unlogged schedule slots. Integer remainders are assigned in schedule order so allocations always sum exactly.

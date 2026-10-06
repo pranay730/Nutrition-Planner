@@ -8,7 +8,7 @@ from sqlalchemy.pool import StaticPool
 from app import models as _models  # noqa: F401
 from app.core.database import Base
 from app.models import Ingredient, PantryItem, User
-from app.models.enums import ActivityLevel, GoalType, PantryStatus
+from app.models.enums import ActivityLevel, CalculationSex, GoalType, PantryStatus
 from app.models.profile import CuisinePreference, Profile
 from app.models.schedule import MealSchedule
 
@@ -38,6 +38,7 @@ def make_profile(user: User, *, age: int = 30, daily_calorie_target: int = 2000)
     return Profile(
         user=user,
         age=age,
+        calculation_sex=CalculationSex.FEMALE,
         height_cm=Decimal("170.00"),
         weight_kg=Decimal("70.00"),
         activity_level=ActivityLevel.MODERATE,

@@ -143,6 +143,8 @@ def test_postgres_migrate_seed_and_metadata_parity(
 @pytest.mark.postgres
 def test_authentication_flow_uses_postgres(postgres_engine: Engine, postgres_url: str) -> None:
     command.upgrade(_alembic_config(postgres_url), "head")
+    with Session(postgres_engine) as session:
+        seed_database(session)
     application = create_app()
 
     def override_database() -> Iterator[Session]:
@@ -174,3 +176,38 @@ def test_authentication_flow_uses_postgres(postgres_engine: Engine, postgres_url
         )
         assert current_user.status_code == 200
         assert current_user.json()["email"] == email
+
+        auth_headers = {"Authorization": f"Bearer {login.json()['access_token']}"}
+        profile = client.put(
+            "/onboarding/profile",
+            headers=auth_headers,
+            json={
+                "age": 30,
+                "calculation_sex": "female",
+                "height_cm": 170,
+                "weight_kg": 70,
+                "activity_level": "moderate",
+                "goal_type": "maintain_weight",
+                "timezone": "UTC",
+            },
+        )
+        assert profile.status_code == 200
+        assert profile.json()["daily_calorie_target"] == 2250
+
+        cuisines = client.put(
+            "/preferences/cuisines",
+            headers=auth_headers,
+            json={"cuisines": ["Indian"]},
+        )
+        assert cuisines.status_code == 200
+
+        suggestions = client.get("/ingredients/suggestions", headers=auth_headers)
+        assert suggestions.status_code == 200
+        assert suggestions.json()
+
+        schedules = client.put(
+            "/meal-schedules",
+            headers=auth_headers,
+            json={"schedules": [{"meal_type": "dinner", "preferred_time": "18:30:00"}]},
+        )
+        assert schedules.status_code == 200

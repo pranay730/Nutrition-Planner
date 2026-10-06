@@ -16,7 +16,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
 from app.models.base import TimestampMixin
-from app.models.enums import ActivityLevel, GoalType, enum_values
+from app.models.enums import ActivityLevel, CalculationSex, GoalType, enum_values
 
 
 class Profile(TimestampMixin, Base):
@@ -37,6 +37,15 @@ class Profile(TimestampMixin, Base):
         ForeignKey("users.id", ondelete="CASCADE"), unique=True, index=True
     )
     age: Mapped[int] = mapped_column(Integer)
+    calculation_sex: Mapped[CalculationSex] = mapped_column(
+        Enum(
+            CalculationSex,
+            values_callable=enum_values,
+            native_enum=False,
+            create_constraint=True,
+            length=16,
+        )
+    )
     height_cm: Mapped[Decimal] = mapped_column(Numeric(5, 2))
     weight_kg: Mapped[Decimal] = mapped_column(Numeric(6, 2))
     activity_level: Mapped[ActivityLevel] = mapped_column(

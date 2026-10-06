@@ -2,7 +2,7 @@
 
 A production-oriented modular monolith that recommends what a user should eat next based on their daily calorie budget, meal schedule, preferences, pantry, and meal history.
 
-This repository currently contains the Phase 1 foundation, Phase 2 persistence layer, and Phase 3 authentication API: React/Vite, FastAPI, PostgreSQL, Redis, Celery, Docker Compose, normalized SQLAlchemy models, Alembic migrations, canonical recipe seed data, and JWT-based authentication. Product APIs described in [PLAN.md](PLAN.md) remain intentionally phased.
+This repository currently contains the foundation, persistence, authentication, and onboarding phases: React/Vite, FastAPI, PostgreSQL, Redis, Celery, Docker Compose, normalized SQLAlchemy models, Alembic migrations, canonical recipe seed data, JWT authentication, calculated calorie targets, cuisine preferences, ingredient suggestions, and meal schedules. Product APIs described in [PLAN.md](PLAN.md) remain intentionally phased.
 
 ## Prerequisites
 
@@ -63,7 +63,7 @@ pytest
 ruff check .
 ```
 
-`pytest` always runs SQLite persistence, seed, constraint, foreign-key, and authentication tests. PostgreSQL tests skip unless the database is reachable. To run the full Phase 2 and Phase 3 gate, start Postgres and point tests at an isolated database:
+`pytest` always runs SQLite persistence, seed, constraint, foreign-key, authentication, and onboarding tests. PostgreSQL tests skip unless the database is reachable. To run the full Phase 2 through Phase 4 gate, start Postgres and point tests at an isolated database:
 
 ```bash
 docker compose up -d postgres
@@ -71,7 +71,7 @@ cd backend
 TEST_DATABASE_URL=postgresql+psycopg://nutrition:nutrition_dev@localhost:5432/nutrition_test pytest
 ```
 
-The Postgres suite upgrades, seeds twice, compares Alembic history to SQLAlchemy metadata, downgrades and re-upgrades, then exercises registration, login, and current-user authorization. It uses `nutrition_test` so it does not wipe local development data.
+The Postgres suite upgrades, seeds twice, compares Alembic history to SQLAlchemy metadata, downgrades and re-upgrades, then exercises authentication and the complete onboarding flow. It uses `nutrition_test` so it does not wipe local development data.
 
 ## Frontend development without Docker
 
@@ -118,6 +118,32 @@ curl http://localhost:8000/users/me \
 ```
 
 Access tokens expire after 30 minutes by default. Set a unique `JWT_SECRET_KEY` of at least 32 characters in every shared environment; the application rejects the development placeholder when `ENVIRONMENT=production`.
+
+## Onboarding API
+
+All onboarding routes require the bearer token returned by registration or login. A profile stores validated health inputs and an IANA timezone; the server calculates the daily calorie target using the Mifflin-St Jeor equation, activity multiplier, and goal adjustment.
+
+```bash
+curl -X PUT http://localhost:8000/onboarding/profile \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{"age":30,"calculation_sex":"female","height_cm":170,"weight_kg":70,"activity_level":"moderate","goal_type":"maintain_weight","timezone":"America/Indiana/Indianapolis"}'
+
+curl -X PUT http://localhost:8000/preferences/cuisines \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{"cuisines":["Indian","Italian"]}'
+
+curl http://localhost:8000/ingredients/suggestions \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN'
+
+curl -X PUT http://localhost:8000/meal-schedules \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{"schedules":[{"meal_type":"breakfast","preferred_time":"08:00:00"},{"meal_type":"dinner","preferred_time":"18:30:00","reminder_minutes_before":30}]}'
+```
+
+Cuisine preferences and meal schedules use replace semantics: each successful request becomes the user's complete current set. Ingredient suggestions are ranked by how many selected cuisines match each canonical ingredient.
 
 ## Configuration
 

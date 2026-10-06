@@ -108,3 +108,6 @@ Each phase must pass its relevant tests before the next phase begins.
 - **Argon2id password hashing:** password verification uses a memory-hard hash and transparently upgrades stored hashes when parameters change.
 - **Short-lived stateless access tokens:** JWTs contain only the user subject and standard access-token claims, are audience/issuer validated, and expire after 30 minutes by default. Refresh and revocation state remain outside V1 until deployment needs justify them.
 - **Token-derived authorization:** protected handlers resolve the active user from the signed JWT subject and never accept a client-provided owner ID.
+- **Server-calculated calorie targets:** onboarding uses Mifflin-St Jeor, explicit activity factors, and a conservative goal adjustment. Targets are rounded deterministically and bounded to the persistence safety range.
+- **Replace-style onboarding collections:** cuisine preferences and meal schedules are submitted as complete sets, making retries idempotent and removal behavior unambiguous.
+- **Preference-ranked pantry suggestions:** canonical ingredients matching more of the user's selected cuisines sort first, with ingredient name as the deterministic tie-breaker.

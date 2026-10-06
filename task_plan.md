@@ -28,7 +28,7 @@ Status legend: `[ ]` pending, `[~]` in progress, `[x]` complete.
 - [x] Automate Postgres migrate, seed-twice, metadata parity, downgrade, and re-upgrade.
 - [x] Run the complete Phase 2 quality gate.
 
-## Phase 3: authentication and authorization (current request)
+## Phase 3: authentication and authorization
 
 - [x] Add Argon2id password hashing and hash-upgrade support.
 - [x] Add issuer-, audience-, and expiry-validated JWT access tokens.
@@ -40,11 +40,21 @@ Status legend: `[ ]` pending, `[~]` in progress, `[x]` complete.
 - [x] Verify the authentication flow against containerized PostgreSQL.
 - [x] Run the complete Phase 3 quality gate.
 
+## Phase 4: onboarding and preferences
+
+- [x] Add profile input validation and IANA timezone validation.
+- [x] Add deterministic Mifflin-St Jeor calorie-target calculation with safe bounds.
+- [x] Implement idempotent `PUT /onboarding/profile` for the token owner.
+- [x] Implement canonical replace-style `PUT /preferences/cuisines`.
+- [x] Implement preference-ranked `GET /ingredients/suggestions`.
+- [x] Implement replace-style `PUT /meal-schedules`.
+- [x] Add ownership, validation, calculation, preference, suggestion, and schedule tests.
+- [x] Verify the complete onboarding flow against containerized PostgreSQL.
+- [x] Run the complete Phase 4 quality gate.
+
 ## Future phases (not started)
 
-- [ ] Implement onboarding and calorie calculation.
-- [ ] Implement cuisine preferences and pantry suggestions.
-- [ ] Implement schedules and pantry management.
+- [ ] Implement pantry management.
 - [ ] Implement meal logging and daily-plan allocation.
 - [ ] Implement deterministic recommendation engine.
 - [ ] Implement reminder and notification workflow.

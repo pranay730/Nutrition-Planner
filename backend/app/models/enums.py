@@ -13,6 +13,11 @@ class ActivityLevel(StrEnum):
     VERY_ACTIVE = "very_active"
 
 
+class CalculationSex(StrEnum):
+    FEMALE = "female"
+    MALE = "male"
+
+
 class GoalType(StrEnum):
     LOSE = "lose_weight"
     MAINTAIN = "maintain_weight"

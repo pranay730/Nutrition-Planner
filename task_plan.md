@@ -63,10 +63,20 @@ Status legend: `[ ]` pending, `[~]` in progress, `[x]` complete.
 - [x] Verify meal logging and daily planning against containerized PostgreSQL.
 - [x] Run the complete Phase 5 quality gate.
 
+## Phase 6: deterministic recommendations
+
+- [x] Define explicit calorie, pantry, cuisine, meal-type, and variety weights.
+- [x] Implement deterministic recipe scoring with stable tie-break rules.
+- [x] Derive the next meal slot and calorie budget from current daily state.
+- [x] Include pantry matches, missing ingredients, component scores, and explanations.
+- [x] Implement protected `GET /recommendations/next` with a validated result limit.
+- [x] Add isolated scoring, history, context, determinism, and authorization tests.
+- [x] Verify recommendations against containerized PostgreSQL.
+- [x] Run the complete Phase 6 quality gate.
+
 ## Future phases (not started)
 
 - [ ] Implement pantry management.
-- [ ] Implement deterministic recommendation engine.
 - [ ] Implement reminder and notification workflow.
 - [ ] Build the React product screens.
 - [ ] Complete backend/frontend test suites and deployment hardening.

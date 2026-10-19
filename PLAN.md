@@ -1,5 +1,4 @@
 # Nutrition Planner V1 Implementation Plan
-
 ## V1 architecture
 
 The application is a modular monolith: one React client, one FastAPI application, one PostgreSQL database, and one Celery worker backed by Redis. PostgreSQL is the source of truth. Redis is limited to Celery queue/result transport in V1. HTTP handlers validate and translate requests, services own business rules, and repositories own SQLAlchemy queries.
@@ -105,11 +104,3 @@ Each phase must pass its relevant tests before the next phase begins.
 - **UUID application identifiers:** domain rows use UUIDs so identifiers remain safe to generate outside a single database process and do not expose row counts.
 - **Portable string enums with database checks:** evolving V1 statuses remain readable strings and are constrained by PostgreSQL without creating PostgreSQL-native enum migration friction.
 - **Idempotent canonical seed data:** ingredients and recipes are matched by unique names, updated in place, and have their normalized associations reconciled on every seed run.
-- **Argon2id password hashing:** password verification uses a memory-hard hash and transparently upgrades stored hashes when parameters change.
-- **Short-lived stateless access tokens:** JWTs contain only the user subject and standard access-token claims, are audience/issuer validated, and expire after 30 minutes by default. Refresh and revocation state remain outside V1 until deployment needs justify them.
-- **Token-derived authorization:** protected handlers resolve the active user from the signed JWT subject and never accept a client-provided owner ID.
-- **Server-calculated calorie targets:** onboarding uses Mifflin-St Jeor, explicit activity factors, and a conservative goal adjustment. Targets are rounded deterministically and bounded to the persistence safety range.
-- **Replace-style onboarding collections:** cuisine preferences and meal schedules are submitted as complete sets, making retries idempotent and removal behavior unambiguous.
-- **Preference-ranked pantry suggestions:** canonical ingredients matching more of the user's selected cuisines sort first, with ingredient name as the deterministic tie-breaker.
-- **Timezone-bounded daily state:** daily meal queries convert the profile's local midnight boundaries to UTC before querying, so totals remain correct across offsets and daylight-saving transitions.
-- **Derived exact meal allocation:** the daily plan reports the signed target-minus-consumed balance and distributes its positive portion across upcoming, unlogged schedule slots. Integer remainders are assigned in schedule order so allocations always sum exactly.

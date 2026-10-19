@@ -227,3 +227,12 @@ def test_authentication_flow_uses_postgres(postgres_engine: Engine, postgres_url
         assert daily_plan.status_code == 200
         assert daily_plan.json()["consumed_calories"] == 500
         assert daily_plan.json()["remaining_calories"] == 1750
+
+        recommendations = client.get(
+            "/recommendations/next?limit=3", headers=auth_headers
+        )
+        assert recommendations.status_code == 200
+        assert len(recommendations.json()["recommendations"]) == 3
+        assert all(
+            item["explanations"] for item in recommendations.json()["recommendations"]
+        )

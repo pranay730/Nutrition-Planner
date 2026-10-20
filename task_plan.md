@@ -84,8 +84,23 @@ Status legend: `[ ]` pending, `[~]` in progress, `[x]` complete.
 - [x] Add timezone, suppression, idempotency, ownership, and authentication tests.
 - [x] Run the complete Phase 7 quality gate.
 
-## Future phases (not started)
+## Phase 8: frontend product experience
 
-- [ ] Implement pantry management.
-- [ ] Build the React product screens.
-- [ ] Complete backend/frontend test suites and deployment hardening.
+- [x] Implement token-owned pantry listing, replacement, and status updates.
+- [x] Build responsive registration and login flows with persisted sessions.
+- [x] Build the three-step profile, cuisine, and meal-schedule onboarding flow.
+- [x] Build the daily dashboard with calories, recommendations, meals, and reminders.
+- [x] Add modal meal logging with immediate dashboard refresh.
+- [x] Build pantry search and inline availability management.
+- [x] Add browser CORS configuration and typed frontend API contracts.
+- [x] Run frontend build, lint, tests, and the backend regression gate.
+
+## Phase 9: hardening and deployment readiness
+
+- [x] Add frontend API client tests and pantry API integration coverage.
+- [x] Enforce backend lint/tests and frontend lint/tests/build in CI.
+- [x] Build the frontend as immutable static assets served by unprivileged Nginx.
+- [x] Add backend and frontend container health checks and dependency ordering.
+- [x] Add a production Compose override with migration-first API startup.
+- [x] Document production configuration, deployment, verification, and rollback.
+- [x] Run the complete local and PostgreSQL-backed release gate.

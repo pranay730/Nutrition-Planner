@@ -2,7 +2,7 @@
 
 A production-oriented modular monolith that recommends what a user should eat next based on their daily calorie budget, meal schedule, preferences, pantry, and meal history.
 
-This repository currently contains the backend through Phase 7: React/Vite, FastAPI, PostgreSQL, Redis, Celery, Docker Compose, normalized persistence, authentication, onboarding, daily state, deterministic recommendations, and idempotent meal reminders with in-app notifications. Product screens and hardening described in [PLAN.md](PLAN.md) remain intentionally phased.
+This repository contains the complete V1 through Phase 9: a responsive React experience backed by FastAPI, PostgreSQL, Redis, and Celery, with authentication, guided onboarding, daily planning, meal logging, recommendations, pantry management, idempotent reminders, automated quality gates, health-checked containers, and production deployment guidance.
 
 ## Prerequisites
 
@@ -197,4 +197,4 @@ Configuration is loaded from environment variables. `.env.example` contains deve
 
 ## Project status
 
-See [task_plan.md](task_plan.md) for the live implementation checklist and [PLAN.md](PLAN.md) for architecture, API, persistence, and phased delivery decisions.
+See [task_plan.md](task_plan.md) for the completed implementation checklist, [PLAN.md](PLAN.md) for architecture decisions, and [DEPLOYMENT.md](DEPLOYMENT.md) for production configuration, rollout, verification, and rollback.

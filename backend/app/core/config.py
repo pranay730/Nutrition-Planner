@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     jwt_issuer: str = "nutrition-planner-api"
     jwt_audience: str = "nutrition-planner-web"
     access_token_expire_minutes: int = Field(default=30, gt=0)
+    frontend_origin: str = "http://localhost:5173"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

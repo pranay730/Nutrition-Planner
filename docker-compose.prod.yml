@@ -1,0 +1,30 @@
+services:
+  backend:
+    command: >-
+      sh -c "alembic upgrade head &&
+      uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2"
+    restart: unless-stopped
+    volumes: []
+
+  worker:
+    restart: unless-stopped
+    volumes: []
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  beat:
+    restart: unless-stopped
+    volumes: []
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      target: production
+      args:
+        VITE_API_URL: ${VITE_API_URL:?VITE_API_URL must be set}
+    restart: unless-stopped
+    volumes: []

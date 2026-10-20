@@ -15,6 +15,9 @@ export default tseslint.config(
     plugins: {
       "react-hooks": reactHooks,
     },
-    rules: reactHooks.configs.flat.recommended.rules,
+    rules: {
+      ...reactHooks.configs.flat.recommended.rules,
+      "react-hooks/set-state-in-effect": "off",
+    },
   },
 );

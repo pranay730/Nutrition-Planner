@@ -2,7 +2,7 @@
 
 A production-oriented modular monolith that recommends what a user should eat next based on their daily calorie budget, meal schedule, preferences, pantry, and meal history.
 
-This repository currently contains the foundation, persistence, authentication, and onboarding phases: React/Vite, FastAPI, PostgreSQL, Redis, Celery, Docker Compose, normalized SQLAlchemy models, Alembic migrations, canonical recipe seed data, JWT authentication, calculated calorie targets, cuisine preferences, ingredient suggestions, and meal schedules. Product APIs described in [PLAN.md](PLAN.md) remain intentionally phased.
+This repository currently contains the backend through Phase 7: React/Vite, FastAPI, PostgreSQL, Redis, Celery, Docker Compose, normalized persistence, authentication, onboarding, daily state, deterministic recommendations, and idempotent meal reminders with in-app notifications. Product screens and hardening described in [PLAN.md](PLAN.md) remain intentionally phased.
 
 ## Prerequisites
 
@@ -26,6 +26,8 @@ Services:
 - Health check: <http://localhost:8000/health>
 - PostgreSQL: `localhost:5432`
 - Redis: `localhost:6379`
+
+Compose also runs a Celery worker and Celery Beat scheduler. Beat checks once per minute for reminders due in the next five minutes.
 
 Stop services with `docker compose down`. Add `--volumes` only when you intentionally want to delete local database data.
 
@@ -63,7 +65,7 @@ pytest
 ruff check .
 ```
 
-`pytest` always runs SQLite persistence, seed, constraint, foreign-key, authentication, onboarding, daily-state, and recommendation tests. PostgreSQL tests skip unless the database is reachable. To run the full Phase 2 through Phase 6 gate, start Postgres and point tests at an isolated database:
+`pytest` always runs SQLite persistence, seed, constraint, foreign-key, authentication, onboarding, daily-state, recommendation, and notification tests. PostgreSQL tests skip unless the database is reachable. To run the full Phase 2 through Phase 7 gate, start Postgres and point tests at an isolated database:
 
 ```bash
 docker compose up -d postgres
@@ -71,7 +73,7 @@ cd backend
 TEST_DATABASE_URL=postgresql+psycopg://nutrition:nutrition_dev@localhost:5432/nutrition_test pytest
 ```
 
-The Postgres suite upgrades, seeds twice, compares Alembic history to SQLAlchemy metadata, downgrades and re-upgrades, then exercises authentication, onboarding, meal logging, daily planning, and recommendations. It uses `nutrition_test` so it does not wipe local development data.
+The Postgres suite upgrades, seeds twice, compares Alembic history to SQLAlchemy metadata, downgrades and re-upgrades, then exercises authentication, onboarding, meal logging, daily planning, recommendations, and notifications. It uses `nutrition_test` so it does not wipe local development data.
 
 ## Frontend development without Docker
 
@@ -174,6 +176,20 @@ curl 'http://localhost:8000/recommendations/next?limit=5' \
 ```
 
 Each recipe receives a score out of 100: calorie fit contributes 40 points, pantry coverage 25, cuisine preference 20, meal-type fit 10, and recent variety 5. Low-stock ingredients receive half pantry credit, while optional ingredients do not reduce coverage. Results include the complete score breakdown, explanations, pantry matches, and missing ingredients. Equal scores are ordered by calorie distance and then recipe name.
+
+## Reminder and notification API
+
+Celery Beat discovers enabled meal reminders in the timezone saved during onboarding. A reminder is suppressed when that meal type has already been logged for the user's local day. Database uniqueness makes generation safe under worker retries and duplicate task delivery.
+
+```bash
+curl 'http://localhost:8000/notifications?unread_only=true' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN'
+
+curl -X PATCH http://localhost:8000/notifications/NOTIFICATION_ID \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{"read":true}'
+```
 
 ## Configuration
 

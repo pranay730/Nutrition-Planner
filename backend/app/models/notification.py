@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, Enum, ForeignKey, String, Text
+from sqlalchemy import DateTime, Enum, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -11,6 +11,9 @@ from app.models.enums import NotificationStatus, enum_values
 
 class Notification(TimestampMixin, Base):
     __tablename__ = "notifications"
+    __table_args__ = (
+        UniqueConstraint("user_id", "meal_type", "scheduled_for", name="reminder_occurrence"),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(

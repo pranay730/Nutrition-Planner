@@ -4,6 +4,7 @@ from app.api.routes.auth import router as auth_router
 from app.api.routes.health import router as health_router
 from app.api.routes.users import router as users_router
 from app.meals.routes import router as meals_router
+from app.notifications.routes import router as notifications_router
 from app.onboarding.routes import router as onboarding_router
 from app.pantry.routes import router as ingredients_router
 from app.preferences import router as preferences_router
@@ -22,3 +23,4 @@ api_router.include_router(schedules_router)
 api_router.include_router(meals_router)
 api_router.include_router(daily_plan_router)
 api_router.include_router(recommendations_router)
+api_router.include_router(notifications_router)

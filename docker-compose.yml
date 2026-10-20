@@ -63,6 +63,19 @@ services:
       redis:
         condition: service_healthy
 
+  beat:
+    build:
+      context: ./backend
+    environment: *backend_environment
+    command: celery -A app.core.celery_app:celery_app beat --loglevel=info
+    volumes:
+      - ./backend:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   frontend:
     build:
       context: ./frontend

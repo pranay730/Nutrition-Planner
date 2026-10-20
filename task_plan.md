@@ -74,9 +74,18 @@ Status legend: `[ ]` pending, `[~]` in progress, `[x]` complete.
 - [x] Verify recommendations against containerized PostgreSQL.
 - [x] Run the complete Phase 6 quality gate.
 
+## Phase 7: reminders and notifications
+
+- [x] Discover upcoming reminders in each user's IANA timezone.
+- [x] Dispatch due reminders with Celery Beat and worker tasks.
+- [x] Suppress reminders for meal types already logged that local day.
+- [x] Make notification generation idempotent under task retries and duplicate delivery.
+- [x] Implement owner-scoped notification listing and read-state updates.
+- [x] Add timezone, suppression, idempotency, ownership, and authentication tests.
+- [x] Run the complete Phase 7 quality gate.
+
 ## Future phases (not started)
 
 - [ ] Implement pantry management.
-- [ ] Implement reminder and notification workflow.
 - [ ] Build the React product screens.
 - [ ] Complete backend/frontend test suites and deployment hardening.
